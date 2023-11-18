@@ -1,0 +1,1649 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Social Media App",
+    "description": "This is a API for Flight Ticket\n\n\n               \n               \n               \n               \n",
+    "version": "1.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000/"
+    },
+    {
+      "url": "http://127.0.0.1:7000/"
+    },
+    {
+      "url": "http://10.210.62.233:5000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "All the Admin related servies are provided here."
+    },
+    {
+      "name": "User",
+      "description": "Operations realted with user creation and profile data."
+    },
+    {
+      "name": "Relations",
+      "description": "Maintaing relationship with other users."
+    },
+    {
+      "name": "Profile Data",
+      "description": "Enables user to get various information about profiles."
+    },
+    {
+      "name": "Feeds",
+      "description": "All activities related to user feed and posts."
+    },
+    {
+      "name": "Posts",
+      "description": "All activities related to a post."
+    }
+  ],
+  "paths": {
+    "/register": {
+      "post": {
+        "description": "Register a user in the database.The user name should be unique.",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "description": "A json object containing user_name,email,phone number,dob and password.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/userDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully a user is created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/adminLogin": {
+      "post": {
+        "description": "Logs in a Admin and generates a Api key that will be active for an hour.",
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "description": "A JSON object that contains admin username and password.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Admin is Logged in and API key is generated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "description": "Logins a user with password.Generate a API key.",
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "description": "A json object containg user_name and password.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully a user is logged in and a API key is created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Login Fails when password is wrong or user name doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/editProfile": {
+      "post": {
+        "description": "Allows user to edit profile",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containg user details to be edited.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/editDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns status as success and updates details in db.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Updating the profile failed due to some errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/follow": {
+      "post": {
+        "description": "Allows user to follow other user",
+        "tags": [
+          "Relations"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containg user name to be followed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profileName"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns status as success and follows the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Following the profile failed due to some errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unfollow": {
+      "post": {
+        "description": "Allows user to unfollow other user",
+        "tags": [
+          "Relations"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containg user name to be unfollowed",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/profileName"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns status as success and unfollows the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Unfollow the profile failed due to some errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/block": {
+      "get": {
+        "description": "Allows to block a profile.",
+        "tags": [
+          "Relations"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "profile",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile Blocked Successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Blocking failed due to errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/unblock": {
+      "get": {
+        "description": "Allows to unblock a profile.",
+        "tags": [
+          "Relations"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "profile",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile Unblocked Successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "unblocking failed due to errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/myprofile": {
+      "get": {
+        "description": "Shows their profile to user",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile Details are returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/profileDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visit": {
+      "get": {
+        "description": "Shows other people's profile.Allows to point out profiles that followed by you in their following and followed list.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "profile",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile Details are returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/profileDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/myFollowings": {
+      "get": {
+        "description": "Shows your Following (accepts page number).If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followings Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/followingDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/myFollowers": {
+      "get": {
+        "description": "Shows your Followers(accepts Page number).If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followers Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/followerDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blockedProfile": {
+      "get": {
+        "description": "Shows the profiles blocked by you.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blocked Profiles Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/blockedProfiles"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showFollowings": {
+      "get": {
+        "description": "Shows other user's Followings with pages.Returns empty list if none found or invalid page.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "profile",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followings Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/followingDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showFollowers": {
+      "get": {
+        "description": "Shows other user's Followers with pages.Returns empty list if none found or invalid page.",
+        "tags": [
+          "Profile Data"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "profile",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Followers Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/followerDetails"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deleteProfile": {
+      "post": {
+        "description": "Allows user to delete their profile",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containg password of their account",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/password"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns status as success and deletes the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Updating the profile failed due to some errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "description": "Logouts of the profile destroys the Api key",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session is logged out successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/postContent": {
+      "post": {
+        "description": "Post a content by the user.",
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the contents of the post.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/postData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns Success and content is posted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns on error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/myPosts": {
+      "get": {
+        "description": "Shows the posts done by you.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/userPosts"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/editPost": {
+      "post": {
+        "description": "Allows the user to edit the post made by them",
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the contents of the post and post id.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/editPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "post edited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deletePost": {
+      "post": {
+        "description": "Allows the user to delete the post made by them",
+        "tags": [
+          "Posts"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the  post id.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/delPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "post deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/myFeed": {
+      "get": {
+        "description": "Shows the posts from the profiles you follow.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeedPosts"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment": {
+      "post": {
+        "description": "Allows user to post a comment under a post.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the contents of the                 comment and post id.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/commentPost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment Posted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reply": {
+      "post": {
+        "description": "Allows user to post a reply to a comment under a post.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the contents of the                 reply and comment id.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/replyComment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment Posted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/likePost": {
+      "post": {
+        "description": "Allows user to like or unlike a post.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containing the post id.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/likePost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "liked the  post.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showLikes": {
+      "get": {
+        "description": "Shows the likes of a post.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Posts Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postLikes"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showComments": {
+      "get": {
+        "description": "Shows the comments of a post.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "postId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "comments Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postComments"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/showReplies": {
+      "get": {
+        "description": "Shows the replies of a comment under a post.If invalid Page number is found then returns a empty array.",
+        "tags": [
+          "Feeds"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "commentId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Replies Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/commentReplies"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to show due to a error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "key"
+      }
+    },
+    "schemas": {
+      "userDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phn": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "loginDetails": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "loginSuccess": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string"
+          },
+          "Message": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          }
+        }
+      },
+      "errorReport": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string"
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      },
+      "editDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phn": {
+            "type": "string"
+          }
+        }
+      },
+      "operationSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "response": {
+            "type": "string"
+          }
+        }
+      },
+      "profileName": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "profileDetails": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phn": {
+            "type": "string"
+          },
+          "age": {
+            "type": "string"
+          }
+        }
+      },
+      "delPost": {
+        "type": "object",
+        "properties": {
+          "postId": {
+            "type": "string"
+          }
+        }
+      },
+      "password": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "followingDetails": {
+        "type": "object",
+        "properties": {
+          "Following": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "followerDetails": {
+        "type": "object",
+        "properties": {
+          "Follower": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "blockedProfiles": {
+        "type": "object",
+        "properties": {
+          "blocked": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "postData": {
+        "type": "object",
+        "properties": {
+          "postContent": {
+            "type": "string"
+          }
+        }
+      },
+      "userPosts": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "postId": {
+                  "type": "string"
+                },
+                "postData": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "editPost": {
+        "type": "object",
+        "properties": {
+          "postId": {
+            "type": "string"
+          },
+          "postData": {
+            "type": "string"
+          }
+        }
+      },
+      "FeedPosts": {
+        "type": "object",
+        "properties": {
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "postBy": {
+                  "type": "string"
+                },
+                "postData": {
+                  "type": "string"
+                },
+                "likes": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "commentPost": {
+        "type": "object",
+        "properties": {
+          "postID": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "likePost": {
+        "type": "object",
+        "properties": {
+          "postID": {
+            "type": "string"
+          }
+        }
+      },
+      "postLikes": {
+        "type": "object",
+        "properties": {
+          "likedBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "likes": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "integer"
+          }
+        }
+      },
+      "replyComment": {
+        "type": "object",
+        "properties": {
+          "commentID": {
+            "type": "string"
+          },
+          "reply": {
+            "type": "string"
+          }
+        }
+      },
+      "postComments": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "comment": {
+                  "type": "string"
+                },
+                "by": {
+                  "type": "string"
+                },
+                "replies": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "commentReplies": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reply": {
+                  "type": "string"
+                },
+                "by": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  }
+}
