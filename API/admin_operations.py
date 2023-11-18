@@ -16,13 +16,13 @@ class Admin():
         
             if(session_check!=None):
 
-                return {"Status":True,"Message":"Already Logged In.","key":session_check["api_key"]}
+                return {"Message":"Already Logged In.","key":session_check["api_key"]}, 200
         
             api_key=secrets.token_urlsafe(16)
             self.admin_session.insert_one({"admin_user":user_name,"login_time":datetime.utcnow(),"api_key":api_key})
-            return {"Status":True,"Message":"Logged In Successfully.","key":api_key}
+            return {"Message":"Logged In Successfully.","key":api_key}, 200
         
-        return {"Status":False,"Message":"Invalid Credentials"}
+        return {"Error":"Invalid Credentials"}, 400
 
 
 if __name__=="__main__":

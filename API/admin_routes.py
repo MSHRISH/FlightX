@@ -15,10 +15,10 @@ def admin_middleware(f):
         try:
             key=request.headers['key']
         except:
-            return {"Error":"Missing API Key in Header"}
+            return {"Error":"Missing API Key in Header"}, 400
         session_status=admin_session.find_one({"api_key":key})
         if(session_status==None):
-            return {"Error":"Invalid API Key"}
+            return {"Error":"Invalid API Key"}, 400
         return f(*args, **kargs)
     return check_session
         
