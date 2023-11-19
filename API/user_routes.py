@@ -7,8 +7,9 @@ from functools import wraps
 users=flight_db["Users"]
 user_session=flight_db['UserSession']
 flight_details=flight_db["FlightDetails"]
+bookings=flight_db['Bookings']
 
-user=user_operations.User(users,user_session,flight_details)
+user=user_operations.User(users,user_session,flight_details,bookings)
 
 def user_middleware(f):
     @wraps(f)
@@ -41,3 +42,11 @@ def user_login():
 @user_middleware
 def search_flights():
     return user.search_flight(request.args)
+
+
+@app.route("/bookTicket",methods=["POST"])
+@user_middleware
+def book_ticket():
+    user_id=user_session.find_one({"api_key":request.headers['key']},{"user_id":1})
+    print(user)
+    return user.book_ticket(user_id["user_id"],request.json)

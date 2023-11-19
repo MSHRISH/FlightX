@@ -3,12 +3,14 @@ import hashlib
 import re
 from datetime import datetime,date
 from flask import request
+from bson import ObjectId
 
 class User():
-    def __init__(self,users,user_session,flight_details):
+    def __init__(self,users,user_session,flight_details,bookings):
         self.users=users
         self.user_session=user_session
         self.flight_details=flight_details
+        self.bookings=bookings
     
     def user_signup(self,username,email,password):
         check_unique_name=self.users.find_one({"username":username})
@@ -59,8 +61,29 @@ class User():
         flights=list(flights)
         return {"count":len(flights),"Flights":flights}, 200
 
+    def book_ticket(self,user_id,flight):
+        try:
+            #YYYY-MM-DD
+            date=datetime.strptime(flight['date'],'%Y-%m-%d').date()
+        except:
+            return {"Error":"Invalid Date"}, 400
+        
+        current_time=datetime.now().date()
+        if(date<current_time):
+            return {"Error":"Invalid Date"}
 
+        flight_check=self.flight_details.find_one({"flight_id":flight['flight_id'],"date":flight["date"]})
+        if(flight_check==None):
+            return {"Error":"Flight not found. Check the flight details"}
+        
+        if(flight_check['seats']<flight['tickets']):
+            return {"Error":"Only "+str(flight_check['seats'])+" seats available in the flight you requested"}
 
+        booking_id=secrets.token_urlsafe(16)
+        self.bookings.insert_one({"user_id":user_id,"flight_id":flight['flight_id'],"date":flight['date'],"seats_booked":flight['tickets'],'booking_id':booking_id})
+        self.flight_details.update_one({"flight_id":flight['flight_id']},{'$set':{'seats':flight_check['seats']-flight['tickets']}})
+
+        return {"Message":"Successfully Booked a ticket Booking Id "+booking_id}
 
 if __name__=="__main__":
     import pymongo
@@ -72,8 +95,9 @@ if __name__=="__main__":
     
     #DB
     flight_db=mongo['FlightTicketBooking']
-    user=User(flight_db['Users'],flight_db["UserSession"],flight_db["FlightDetails"])
+    user=User(flight_db['Users'],flight_db["UserSession"],flight_db["FlightDetails"],flight_db['Bookings'])
     # print(user.user_signup("tester","tester@gmail.com","tester123"))
     # print(user.user_login("shrish","shrish123"))
 
-    print(user.search_flight({}))
+    # print(user.search_flight({}))
+    print(user.book_ticket("655999c4cd0736f848427657",{"flight_id":"chris25","date":"2023-12-25","tickets":10}))

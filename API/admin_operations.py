@@ -32,9 +32,15 @@ class Admin():
             date=datetime.strptime(date,'%Y-%m-%d').date()
         except:
             return {"Error":"Invalid Date"}, 400
+        
         current_time=datetime.now().date()
         if(date<current_time):
             return {"Error":"Invalid Date"}
+        
+        flight_id_check=self.flight_details.find_one({"date":str(date),"flight_id":flight_id})
+        if(flight_id_check!=None):
+            return {"Error":"Flight with same ID exists on that day"}
+        
         self.flight_details.insert_one({"flight_id":flight_id,"flight_name":flight_name,"date":str(date),"seats":60})
         return {"Message":"Flight Successfully Added.Users can book tickets now."}, 200
 

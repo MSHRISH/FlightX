@@ -134,7 +134,7 @@
           }
         ],
         "requestBody": {
-          "description": "A Json object containing flightname, flightid and   date. The date is in \"YYYY-MM-DD\" format. Old dates are not   allowed.",
+          "description": "A Json object containing flightname, flightid and   date. The date is in \"YYYY-MM-DD\" format. Old dates are not   allowed. Flights on a same day must have unique IDs so that   there is no confusion while booking tickets",
           "required": true,
           "content": {
             "application/json": {
@@ -257,6 +257,52 @@
           },
           "400": {
             "description": "Either the api key is invalid or no flights are found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookTicket": {
+      "post": {
+        "description": "Allows the user to book tickets in flight.",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A json object containg the details of flight such as flight_id, date and no.of tickets.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/bookTickets"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The booking is successfull and the booking id is shown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The api key is invalid, the flight details is wrong or the flight doesn't have enough tickets.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1360,6 +1406,20 @@
                 }
               }
             }
+          }
+        }
+      },
+      "bookTickets": {
+        "type": "object",
+        "properties": {
+          "flight_id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "tickets": {
+            "type": "string"
           }
         }
       },
