@@ -34,10 +34,8 @@ def admin_login():
 
 
 
-
-
 @app.route("/protected")
-@admin_middleware
+@admin.admin_middleware
 def protected():
     return "hello"
 

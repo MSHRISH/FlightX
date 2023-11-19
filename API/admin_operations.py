@@ -1,12 +1,26 @@
 # from API import flight_db
 import secrets
 from datetime import datetime,date
+from flask import request
 
 
 class Admin():
     def __init__(self,admin,admin_session):
         self.admin=admin
         self.admin_session=admin_session
+
+    def admin_middleware(self,f):
+        def check_session(*args,**kargs):
+            try:
+                key=request.headers['key']
+            except:
+                return {"Error":"Missing API Key in Header"}, 400
+            session_status=self.admin_session.find_one({"api_key":key})
+            if(session_status==None):
+                return {"Error":"Invalid API Key"}, 400
+            return f(*args, **kargs)
+        
+        return check_session
     
     def admin_login(self,user_name,pass_word):
         check_auth=self.admin.find_one({"admin_user":user_name,"admin_password":pass_word})
