@@ -57,7 +57,7 @@ class User():
     def search_flight(self,flight_data):
         flights=list(self.flight_details.find(flight_data,{"_id":0}).sort("date",1))
         if(len(flights)==0):
-            return {"Error":"No Results Found"}, 400
+            return {"Error":"No Results Found.Check Flight details."}, 400
         flights=list(flights)
         return {"count":len(flights),"Flights":flights}, 200
 
@@ -80,7 +80,7 @@ class User():
             return {"Error":"Only "+str(flight_check['seats'])+" seats available in the flight you requested"}
 
         booking_id=secrets.token_urlsafe(16)
-        self.bookings.insert_one({"user_id":user_id,"flight_id":flight['flight_id'],"date":flight['date'],"seats_booked":flight['tickets'],'booking_id':booking_id})
+        self.bookings.insert_one({"user_id":user_id,"flight":flight_check['_id'],"seats_booked":flight['tickets'],'booking_id':booking_id})
         self.flight_details.update_one({"flight_id":flight['flight_id']},{'$set':{'seats':flight_check['seats']-flight['tickets']}})
 
         return {"Message":"Successfully Booked a ticket Booking Id "+booking_id}
@@ -99,5 +99,5 @@ if __name__=="__main__":
     # print(user.user_signup("tester","tester@gmail.com","tester123"))
     # print(user.user_login("shrish","shrish123"))
 
-    # print(user.search_flight({}))
-    print(user.book_ticket("655999c4cd0736f848427657",{"flight_id":"chris25","date":"2023-12-25","tickets":10}))
+    print(user.search_flight({"date":"2023-12-25"}))
+    # print(user.book_ticket("655999c4cd0736f848427657",{"flight_id":"chris25","date":"2023-12-25","tickets":10}))

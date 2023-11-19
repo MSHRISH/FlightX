@@ -7,10 +7,10 @@ from functools import wraps
 admin=flight_db["Admin"]
 admin_session=flight_db['AdminSession']
 flight_details=flight_db["FlightDetails"]
-
+bookings=flight_db["Bookings"]
 
 # admin=flight_db['Admin']
-admin=admin_operations.Admin(admin,admin_session,flight_details)
+admin=admin_operations.Admin(admin,admin_session,flight_details,bookings)
 
 def admin_middleware(f):
     @wraps(f)
@@ -38,16 +38,8 @@ def add_flight():
 
 
 
-
-
-
-
-
-@app.route("/protected")
+@app.route("/viewBookings")
 @admin_middleware
-def protected():
-    return "hello"
-
-
-
+def view_bookings():
+    return admin.view_bookings(request.args)
     

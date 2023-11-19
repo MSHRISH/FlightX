@@ -6,10 +6,12 @@ from functools import wraps
 
 
 class Admin():
-    def __init__(self,admin,admin_session,flight_details):
+    def __init__(self,admin,admin_session,flight_details,bookings):
         self.admin=admin
         self.admin_session=admin_session
         self.flight_details=flight_details    
+        self.bookings=bookings
+
     def admin_login(self,user_name,pass_word):
         check_auth=self.admin.find_one({"admin_user":user_name,"admin_password":pass_word})
         
@@ -43,6 +45,60 @@ class Admin():
         
         self.flight_details.insert_one({"flight_id":flight_id,"flight_name":flight_name,"date":str(date),"seats":60})
         return {"Message":"Flight Successfully Added.Users can book tickets now."}, 200
+    
+    def view_bookings(self,filter):      
+        flight_list=list(self.flight_details.find(filter))
+        if(len(flight_list)==0):
+            return {"Error":"No Bookings Found.Enter proper flight details."}
+        
+        def make_flight_list(data_object):
+            return data_object["_id"]
+        flight_list=list(map(make_flight_list,flight_list))
+        
+        pipeline=[
+            {"$match":{"flight":{"$in":flight_list}}},
+            {
+                "$lookup":{
+                    "from":"FlightDetails",
+                    "localField":"flight",
+                    "foreignField":"_id",
+                    "as":"flightDetails"
+                }
+            },
+            {
+                "$lookup":{
+                    "from":"Users",
+                    "localField":"user_id",
+                    "foreignField":"_id",
+                    "as":"userDetails"
+                }
+            },
+            {
+                "$unwind":"$flightDetails"
+            },
+            {
+                "$unwind":"$userDetails"
+            },
+            {
+                "$project":{
+                    "_id":0,
+                    "seats_booked":1,
+                    "booking_id":1,
+                    "user_name":"$userDetails.username",
+                    "flight_id":"$flightDetails.flight_id",
+                    "flight_name":"$flightDetails.flight_name",
+                    "date":"$flightDetails.date"
+                }
+            }
+        ]
+
+        bookings=list(self.bookings.aggregate(pipeline))
+
+        if(len(bookings)==0):
+            return {"Error":"No Bookings Found.Enter proper flight details."}
+        
+        return {"Tickets Booked":bookings}
+
 
 if __name__=="__main__":
     import pymongo
@@ -55,13 +111,14 @@ if __name__=="__main__":
     #DB
     flight_db=mongo['FlightTicketBooking']
 
-    admin=Admin(flight_db['Admin'],flight_db['AdminSession'],flight_db["FlightDetails"])
+    admin=Admin(flight_db['Admin'],flight_db['AdminSession'],flight_db["FlightDetails"],flight_db['Bookings'])
     # print(admin.admin_login("admin","admin123"))
 
-    print(admin.add_flight("123x","flighta","2023-12-25"))
+    # print(admin.add_flight("123x","flighta","2023-12-25"))
     #YYYY-MM-DD
     # date="2023-11-20"
     # date=datetime.strptime(date,'%Y-%m-%d').date()
     # if(date<datetime.now().date()):
     #     print("OLd")    
     # print(date)
+    print(admin.view_bookings({"date":"2023-12-24"}))
