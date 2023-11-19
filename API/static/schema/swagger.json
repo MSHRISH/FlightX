@@ -81,6 +81,47 @@
         }
       }
     },
+    "/adminLogin": {
+      "post": {
+        "description": "Logs in a Admin and generates a Api key that will be active for an hour.",
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "description": "A JSON object that contains admin username and password.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/loginDetails"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Admin is Logged in and API key is generated.If the admin is already logged in then the API key is returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/loginSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/addFlight": {
       "post": {
         "description": "Allows the admin top add flights to the DB.",
@@ -110,47 +151,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/operationSuccess"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorReport"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/adminLogin": {
-      "post": {
-        "description": "Logs in a Admin and generates a Api key that will be active for an hour.",
-        "tags": [
-          "Admin"
-        ],
-        "requestBody": {
-          "description": "A JSON object that contains admin username and password.",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/loginDetails"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully Admin is Logged in and API key is generated.If the admin is already logged in then the API key is returned.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/loginSuccess"
                 }
               }
             }
@@ -198,6 +198,65 @@
           },
           "400": {
             "description": "Login Fails when password is wrong or user name doesn't exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searchFlight": {
+      "get": {
+        "description": "Allows user to get the list of flights according to the fliter. The filter options is passed to in the URL as query.If no query is given then all flights are returned irrespective of the date inorder to give user. The list of flights are sorted according to their date.",
+        "tags": [
+          "User"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "flight_name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "flight_id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Must be in YYYY-MM-DD",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flights reults are returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/flights"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Either the api key is invalid or no flights are found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1276,6 +1335,31 @@
           },
           "date": {
             "type": "string"
+          }
+        }
+      },
+      "flights": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "Flights": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "flight_id": {
+                  "type": "string"
+                },
+                "flight_name": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                }
+              }
+            }
           }
         }
       },

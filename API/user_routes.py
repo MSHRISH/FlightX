@@ -40,4 +40,4 @@ def user_login():
 @app.route("/searchFlight")
 @user_middleware
 def search_flights():
-    return user.search_flight(request.json)
+    return user.search_flight(request.args)

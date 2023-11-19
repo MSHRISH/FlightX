@@ -53,17 +53,11 @@ class User():
         return {"Error":"Invalid Credentials"}, 400
     
     def search_flight(self,flight_data):
-        flights=list(self.flight_details.find(flight_data,{"_id":0}))
+        flights=list(self.flight_details.find(flight_data,{"_id":0}).sort("date",1))
         if(len(flights)==0):
-            return {"Message":"No Results Found"}
-        # print(list(flights))
-        
-        # def craft_response(data_object):
-        #     del data_object['_id']
-        #     # return {"flight_name":data_object["flight_name"],"flight_id":data_object["flight_id"],"date":data_object["date"],"seats":data_object["seats"]}
-        #     return data_object
+            return {"Error":"No Results Found"}, 400
         flights=list(flights)
-        return {"No.of Results Found":len(flights),"Flights":flights}
+        return {"count":len(flights),"Flights":flights}, 200
 
 
 
@@ -82,4 +76,4 @@ if __name__=="__main__":
     # print(user.user_signup("tester","tester@gmail.com","tester123"))
     # print(user.user_login("shrish","shrish123"))
 
-    print(user.search_flight({"date":"2023-12-25"}))
+    print(user.search_flight({}))
