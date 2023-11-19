@@ -5,9 +5,10 @@ from datetime import datetime,date
 from flask import request
 
 class User():
-    def __init__(self,users,user_session):
+    def __init__(self,users,user_session,flight_details):
         self.users=users
         self.user_session=user_session
+        self.flight_details=flight_details
     
     def user_signup(self,username,email,password):
         check_unique_name=self.users.find_one({"username":username})
@@ -50,6 +51,21 @@ class User():
             return {"Message":"Logged In Successfully.","key":api_key}, 200
         
         return {"Error":"Invalid Credentials"}, 400
+    
+    def search_flight(self,flight_data):
+        flights=list(self.flight_details.find(flight_data,{"_id":0}))
+        if(len(flights)==0):
+            return {"Message":"No Results Found"}
+        # print(list(flights))
+        
+        # def craft_response(data_object):
+        #     del data_object['_id']
+        #     # return {"flight_name":data_object["flight_name"],"flight_id":data_object["flight_id"],"date":data_object["date"],"seats":data_object["seats"]}
+        #     return data_object
+        flights=list(flights)
+        return {"No.of Results Found":len(flights),"Flights":flights}
+
+
 
 
 if __name__=="__main__":
@@ -62,6 +78,8 @@ if __name__=="__main__":
     
     #DB
     flight_db=mongo['FlightTicketBooking']
-    user=User(flight_db['Users'],flight_db["UserSession"])
+    user=User(flight_db['Users'],flight_db["UserSession"],flight_db["FlightDetails"])
     # print(user.user_signup("tester","tester@gmail.com","tester123"))
-    print(user.user_login("shrish","shrish123"))
+    # print(user.user_login("shrish","shrish123"))
+
+    print(user.search_flight({"date":"2023-12-25"}))

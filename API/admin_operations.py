@@ -52,7 +52,7 @@ if __name__=="__main__":
     admin=Admin(flight_db['Admin'],flight_db['AdminSession'],flight_db["FlightDetails"])
     # print(admin.admin_login("admin","admin123"))
 
-    print(admin.add_flight("123x","flighta","2023-11-19"))
+    print(admin.add_flight("123x","flighta","2023-12-25"))
     #YYYY-MM-DD
     # date="2023-11-20"
     # date=datetime.strptime(date,'%Y-%m-%d').date()
