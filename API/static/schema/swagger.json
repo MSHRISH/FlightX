@@ -81,6 +81,52 @@
         }
       }
     },
+    "/addFlight": {
+      "post": {
+        "description": "Allows the admin top add flights to the DB.",
+        "tags": [
+          "Admin"
+        ],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "A Json object containing flightname, flightid and   date. The date is in \"YYYY-MM-DD\" format. Old dates are not   allowed.",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/flightData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully a flight is added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/operationSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorReport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/adminLogin": {
       "post": {
         "description": "Logs in a Admin and generates a Api key that will be active for an hour.",
@@ -1215,6 +1261,20 @@
             "type": "string"
           },
           "key": {
+            "type": "string"
+          }
+        }
+      },
+      "flightData": {
+        "type": "object",
+        "properties": {
+          "flightname": {
+            "type": "string"
+          },
+          "flightid": {
+            "type": "string"
+          },
+          "date": {
             "type": "string"
           }
         }

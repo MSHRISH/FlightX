@@ -2,25 +2,14 @@
 import secrets
 from datetime import datetime,date
 from flask import request
+from functools import wraps
 
 
 class Admin():
-    def __init__(self,admin,admin_session):
+    def __init__(self,admin,admin_session,flight_details):
         self.admin=admin
         self.admin_session=admin_session
-    def admin_middleware(self,f):
-        def check_session(*args,**kargs):
-            try:
-                key=request.headers['key']
-            except:
-                return {"Error":"Missing API Key in Header"}, 400
-            session_status=self.admin_session.find_one({"api_key":key})
-            if(session_status==None):
-                return {"Error":"Invalid API Key"}, 400
-            return f(*args, **kargs)
-        
-        return check_session
-    
+        self.flight_details=flight_details    
     def admin_login(self,user_name,pass_word):
         check_auth=self.admin.find_one({"admin_user":user_name,"admin_password":pass_word})
         
@@ -36,7 +25,18 @@ class Admin():
             return {"Message":"Logged In Successfully.","key":api_key}, 200
         
         return {"Error":"Invalid Credentials"}, 400
-
+    
+    def add_flight(self,flight_id,flight_name,date):
+        try:
+            #YYYY-MM-DD
+            date=datetime.strptime(date,'%Y-%m-%d').date()
+        except:
+            return {"Error":"Invalid Date"}, 400
+        current_time=datetime.now().date()
+        if(date<current_time):
+            return {"Error":"Invalid Date"}
+        self.flight_details.insert_one({"flight_id":flight_id,"flight_name":flight_name,"date":str(date),"seats":60})
+        return {"Message":"Flight Successfully Added.Users can book tickets now."}, 200
 
 if __name__=="__main__":
     import pymongo
@@ -49,5 +49,13 @@ if __name__=="__main__":
     #DB
     flight_db=mongo['FlightTicketBooking']
 
-    admin=Admin(flight_db['Admin'],flight_db['AdminSession'])
-    print(admin.admin_login("admin","admin123"))
+    admin=Admin(flight_db['Admin'],flight_db['AdminSession'],flight_db["FlightDetails"])
+    # print(admin.admin_login("admin","admin123"))
+
+    print(admin.add_flight("123x","flighta","2023-11-19"))
+    #YYYY-MM-DD
+    # date="2023-11-20"
+    # date=datetime.strptime(date,'%Y-%m-%d').date()
+    # if(date<datetime.now().date()):
+    #     print("OLd")    
+    # print(date)
