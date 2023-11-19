@@ -19,4 +19,5 @@ app=Flask(__name__)
 
 from API import documentation
 from API import admin_routes
+from API import user_routes
 

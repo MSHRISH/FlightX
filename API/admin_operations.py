@@ -8,7 +8,6 @@ class Admin():
     def __init__(self,admin,admin_session):
         self.admin=admin
         self.admin_session=admin_session
-
     def admin_middleware(self,f):
         def check_session(*args,**kargs):
             try:

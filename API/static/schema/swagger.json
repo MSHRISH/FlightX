@@ -10,13 +10,7 @@
       "url": "http://127.0.0.1:5000/"
     },
     {
-      "url": "http://127.0.0.1:7000/"
-    },
-    {
-      "url": "http://10.210.62.233:5000"
-    },
-    {
-      "url":"https://flightx-4fxd.onrender.com/"
+      "url": "https://flightx-4fxd.onrender.com/"
     }
   ],
   "tags": [
@@ -26,7 +20,7 @@
     },
     {
       "name": "User",
-      "description": "Operations realted with user creation and profile data."
+      "description": "All the User specified services are provided here."
     },
     {
       "name": "Relations",
@@ -46,14 +40,14 @@
     }
   ],
   "paths": {
-    "/register": {
+    "/userSignUp": {
       "post": {
-        "description": "Register a user in the database.The user name should be unique.",
+        "description": "Register a user in the database.The username should be unique. The username must be atleast 6 characters and atmost 20 characters. The username must contain only alphabets. The email must be valid. The password must contain only alphabets and numbers and must be of atleast 6 characters long and atmost of 20 characters long.",
         "tags": [
           "User"
         ],
         "requestBody": {
-          "description": "A json object containing user_name,email,phone number,dob and password.",
+          "description": "A json object containing username,email,and a password. Username and email must be unique.",
           "required": true,
           "content": {
             "application/json": {
@@ -106,7 +100,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully Admin is Logged in and API key is generated.",
+            "description": "Successfully Admin is Logged in and API key is generated.If the admin is already logged in then the API key is returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -128,14 +122,14 @@
         }
       }
     },
-    "/login": {
+    "/userLogin": {
       "post": {
-        "description": "Logins a user with password.Generate a API key.",
+        "description": "Logins a user with username or email and password.Generates an API key.",
         "tags": [
           "User"
         ],
         "requestBody": {
-          "description": "A json object containg user_name and password.",
+          "description": "A json object containg username (or email) and password.",
           "required": true,
           "content": {
             "application/json": {
@@ -147,7 +141,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successfully a user is logged in and a API key is created.",
+            "description": "Successfully a user is logged in and an API key is created. If the user is already logged in then the API key is returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -158,51 +152,6 @@
           },
           "400": {
             "description": "Login Fails when password is wrong or user name doesn't exist.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorReport"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/editProfile": {
-      "post": {
-        "description": "Allows user to edit profile",
-        "tags": [
-          "User"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "description": "A json object containg user details to be edited.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/editDetails"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns status as success and updates details in db.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/operationSuccess"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Updating the profile failed due to some errors.",
             "content": {
               "application/json": {
                 "schema": {
@@ -693,86 +642,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/followerDetails"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Failed to show due to a error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorReport"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/deleteProfile": {
-      "post": {
-        "description": "Allows user to delete their profile",
-        "tags": [
-          "User"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "requestBody": {
-          "description": "A json object containg password of their account",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/password"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns status as success and deletes the user.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/operationSuccess"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Updating the profile failed due to some errors.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/errorReport"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/logout": {
-      "get": {
-        "description": "Logouts of the profile destroys the Api key",
-        "tags": [
-          "User"
-        ],
-        "security": [
-          {
-            "ApiKeyAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Session is logged out successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/operationSuccess"
                 }
               }
             }
@@ -1317,16 +1186,10 @@
       "userDetails": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "dob": {
+          "username": {
             "type": "string"
           },
           "email": {
-            "type": "string"
-          },
-          "phn": {
             "type": "string"
           },
           "password": {
@@ -1348,9 +1211,6 @@
       "loginSuccess": {
         "type": "object",
         "properties": {
-          "Status": {
-            "type": "string"
-          },
           "Message": {
             "type": "string"
           },
@@ -1359,13 +1219,18 @@
           }
         }
       },
+      "operationSuccess": {
+        "type": "object",
+        "properties": {
+          "Message": {
+            "type": "string"
+          }
+        }
+      },
       "errorReport": {
         "type": "object",
         "properties": {
-          "Status": {
-            "type": "string"
-          },
-          "error": {
+          "Error": {
             "type": "string"
           }
         }
@@ -1383,17 +1248,6 @@
             "type": "string"
           },
           "phn": {
-            "type": "string"
-          }
-        }
-      },
-      "operationSuccess": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "response": {
             "type": "string"
           }
         }
