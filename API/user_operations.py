@@ -43,7 +43,6 @@ class User():
             session_check=self.user_session.find_one({"user_id":check_auth['_id']})
         
             if(session_check!=None):
-
                 return {"Message":"Already Logged In.","key":session_check["api_key"]}, 200
         
             api_key=secrets.token_urlsafe(16)

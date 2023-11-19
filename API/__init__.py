@@ -1,7 +1,8 @@
 from flask import Flask, request
+import os
 from dotenv import load_dotenv
 load_dotenv()
-import os
+
 
 
 
@@ -11,8 +12,6 @@ mongo = pymongo.MongoClient(atlas_url)
 
 #DB
 flight_db=mongo['FlightTicketBooking']
-
-
 
 
 app=Flask(__name__)

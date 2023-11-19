@@ -6,7 +6,6 @@ from API import user_operations
 user=user_operations.User(flight_db["Users"],flight_db["UserSession"])
 
 
-
 @app.route("/userSignUp",methods=['POST'])
 def user_signup():
     user_data=request.json
