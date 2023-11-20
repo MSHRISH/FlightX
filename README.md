@@ -8,7 +8,7 @@ Admin Credentials:<br/>
   password: admin123
 
 Note: This project was developed for the second round of Presidio recruitment process. Keeping in mind that reviewers from the organisation would test my system I have left the credentials out in open (For Now). 
-Anyone outside the organisation kindly don't abuse it. Also, kindly follow "YYYY-MM-DD" format for inputing dates to the API.
+Anyone outside the organisation kindly don't abuse it. Also, kindly follow "YYYY-MM-DD" format for inputing dates to the API. The project can't run on other local machine as the system makes use of Monog Atlas. Atlas allows access only to devices if it's IP Address is added in it. So I have hosted the API in the link specified above. The link redirects to the documentation of the API on Swagger Interface which can be used to test it. If you would like to review this project on your local machine kindly contact me and I will add your device's IP address to the Mongo Atlas. Thank You.
 
 Admin Use Cases:
 1. /adminLogin: When logged in with credentials a API Key of TTL 60 mins in created. This key can be used to access the other admin endpoints. 
