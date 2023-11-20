@@ -12,6 +12,7 @@ class User():
         self.flight_details=flight_details
         self.bookings=bookings
     
+    #Signup a user
     def user_signup(self,username,email,password):
         check_unique_name=self.users.find_one({"username":username})
         if(check_unique_name!=None):
@@ -39,6 +40,7 @@ class User():
         self.users.insert_one({"username":username,"email":email,"password":password})
         return {"Message":"Signup Successful.Login with your username or signed up email and password."}
 
+    #Login a user
     def user_login(self,username,password):
         check_auth=self.users.find_one({"$or":[{"username":username},{"email":username}],"password":hashlib.md5(password.encode()).hexdigest()})
     
@@ -54,6 +56,7 @@ class User():
         
         return {"Error":"Invalid Credentials"}, 400
     
+    #Search for a flight
     def search_flight(self,flight_data):
         flights=list(self.flight_details.find(flight_data,{"_id":0}).sort("date",1))
         if(len(flights)==0):
@@ -61,6 +64,7 @@ class User():
         flights=list(flights)
         return {"count":len(flights),"Flights":flights}, 200
 
+    #Book a ticket
     def book_ticket(self,user_id,flight):
         try:
             #YYYY-MM-DD
@@ -88,6 +92,8 @@ class User():
 
         return {"Message":"Successfully Booked a ticket Booking Id "+booking_id}
 
+
+#Testing purposes kindly ignore
 if __name__=="__main__":
     import pymongo
     import os

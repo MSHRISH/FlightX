@@ -5,6 +5,7 @@ from flask import request
 from functools import wraps
 
 
+
 class Admin():
     def __init__(self,admin,admin_session,flight_details,bookings):
         self.admin=admin
@@ -12,6 +13,7 @@ class Admin():
         self.flight_details=flight_details    
         self.bookings=bookings
 
+    #Login the Admin
     def admin_login(self,user_name,pass_word):
         check_auth=self.admin.find_one({"admin_user":user_name,"admin_password":pass_word})
         
@@ -28,6 +30,7 @@ class Admin():
         
         return {"Error":"Invalid Credentials"}, 400
     
+    #Add a Flight
     def add_flight(self,flight_id,flight_name,date):
         try:
             #YYYY-MM-DD
@@ -46,6 +49,7 @@ class Admin():
         self.flight_details.insert_one({"flight_id":flight_id,"flight_name":flight_name,"date":str(date),"seats":60})
         return {"Message":"Flight Successfully Added.Users can book tickets now."}, 200
     
+    #View all booked tickets
     def view_bookings(self,filter):      
         flight_list=list(self.flight_details.find(filter))
         if(len(flight_list)==0):
@@ -100,6 +104,8 @@ class Admin():
         return {"Tickets Booked":bookings}
 
 
+
+#Testing purposes kindly ignore
 if __name__=="__main__":
     import pymongo
     import os
