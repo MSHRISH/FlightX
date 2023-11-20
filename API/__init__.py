@@ -1,10 +1,10 @@
 from flask import Flask, request, redirect
 import os
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 
 import pymongo
-atlas_url=os.environ['MONGO_URL']
+atlas_url=os.environ["mongodb+srv://mynameisshrish:R7N0Q9EQXVHKoFWi@flight.gzqsbny.mongodb.net/"]
 mongo = pymongo.MongoClient(atlas_url)
 
 #DB
