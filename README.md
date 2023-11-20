@@ -2,7 +2,7 @@
 Flight Ticket Booking API 
 This is a Flight Ticket Booking API built from scratch using Flask and MongoDB Atlas. The API is documented using Swagger.
 The API is Hosted in Render https://flightx-4fxd.onrender.com<br/>
-Kindly Visit the Above site to see the project
+Kindly Visit the Above site to see the project.<br/>
 Admin Credentials:
   username:admin
   password: admin123
