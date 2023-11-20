@@ -67,6 +67,9 @@ class User():
             date=datetime.strptime(flight['date'],'%Y-%m-%d').date()
         except:
             return {"Error":"Invalid Date"}, 400
+
+        if(flight['tickets']==0):
+            return {"Error":"You can't book zero tickets."}
         
         current_time=datetime.now().date()
         if(date<current_time):
