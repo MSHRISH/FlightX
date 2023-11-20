@@ -4,7 +4,7 @@ import os
 # load_dotenv()
 
 import pymongo
-atlas_url=os.environ["mongodb+srv://mynameisshrish:R7N0Q9EQXVHKoFWi@flight.gzqsbny.mongodb.net/"]
+atlas_url="mongodb+srv://mynameisshrish:R7N0Q9EQXVHKoFWi@flight.gzqsbny.mongodb.net/"
 mongo = pymongo.MongoClient(atlas_url)
 
 #DB
